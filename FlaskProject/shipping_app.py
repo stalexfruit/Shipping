@@ -9,6 +9,11 @@ from flask import Flask
 from database import db
 from shipping_routes import shipping_bp
 
+if os.getenv("FLASK_ENV") == "pos":
+    from src.utils.db_utils import db
+else:
+    from database import db
+
 # Initialize Flask app
 app = Flask(__name__)
 
