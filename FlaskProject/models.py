@@ -1,8 +1,8 @@
 import os
 if os.getenv("FLASK_ENV") == "pos":
-    from database import db
+    from src.utils.db_utils import db
 else:
-    from .database import db
+    from database import db
 
 class Customer(db.Model):
     __tablename__ = 'Customer'

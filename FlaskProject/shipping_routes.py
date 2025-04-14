@@ -3,11 +3,11 @@ from flask import Blueprint, request, jsonify
 
 # Environment-specific import handling
 if os.getenv("FLASK_ENV") == "pos":
-    from database import db
+    from src.utils.db_utils import db
 else:
-    from ..database import db
+    from database import db
 
-from ..models import Customer, Order
+from models import Customer, Order
 
 # Define the shipping blueprint
 shipping_bp = Blueprint('shipping', __name__)
