@@ -16,10 +16,11 @@ connection = sqlite3.connect('shippingDatabase.db')
 cursor = connection.cursor()
 
 
-#
+# function called when an order's state is changed, updating the database accordingly
 def orderTracking(orderID, orderCase):
     match orderCase:
 
+        # order is being processed
         case "processing":
             cursor.execute('''
             UPDATE Shipping
@@ -28,6 +29,7 @@ def orderTracking(orderID, orderCase):
             ''', ("Processing Order", datetime.now(), orderID))
             return "Successful!"
 
+        # order is in warehouse 1
         case "warehouse1":
             cursor.execute('''
             UPDATE Shipping
@@ -36,6 +38,7 @@ def orderTracking(orderID, orderCase):
             ''', ("In Warehouse 1", datetime.now(), orderID))
             return "Successful!"
 
+        # order is being delivered to warehouse 1
         case "warehouse1-delivering":
             cursor.execute('''
             UPDATE Shipping
@@ -44,6 +47,7 @@ def orderTracking(orderID, orderCase):
             ''', ("En Route to Warehouse 1", datetime.now(), orderID))
             return "Successful!"
 
+        # order is in warehouse 2
         case "warehouse2":
             cursor.execute('''
             UPDATE Shipping
@@ -52,6 +56,7 @@ def orderTracking(orderID, orderCase):
             ''', ("In Warehouse 2", datetime.now(), orderID))
             return "Successful!"
 
+        # order is being delivered to warehouse 2
         case "warehouse2-delivering":
             cursor.execute('''
             UPDATE Shipping
@@ -60,6 +65,7 @@ def orderTracking(orderID, orderCase):
             ''', ("En Route to Warehouse 2", datetime.now(), orderID))
             return "Successful!"
 
+        # order has been delivered to the customer
         case "customerAddress":
             cursor.execute('''
             UPDATE Shipping
@@ -68,6 +74,7 @@ def orderTracking(orderID, orderCase):
             ''', ("Delivered to Customer", datetime.now(), orderID))
             return "Successful!"
 
+        # order is being delivered to the customer
         case "customerAddress-delivering":
             cursor.execute('''
             UPDATE Shipping
@@ -76,5 +83,6 @@ def orderTracking(orderID, orderCase):
             ''', ("En Route to Customer", datetime.now(), orderID))
             return "Successful!"
 
+        # orderCase is something other than the previous cases
         case _:
             return "ERROR: INVALID COMMAND SENT"
