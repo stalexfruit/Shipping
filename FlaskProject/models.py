@@ -20,14 +20,6 @@ class Order(db.Model):
     Shipping_Option = db.Column(db.String(50), nullable=False)
     Shipping_Cost = db.Column(db.Float, nullable=False)
 
-class Product(db.Model):
-    __tablename__ = 'Product'
-    Product_ID = db.Column(db.Integer, primary_key=True)
-    Inventory_ID = db.Column(db.Integer)
-    Product_name = db.Column(db.String(255), nullable=False)
-    Price = db.Column(db.Float, nullable=False)
-    Stock = db.Column(db.Integer, nullable=False)
-
 class Shipping(db.Model):
     __tablename__ = 'Shipping'
     Shipping_ID = db.Column(db.Integer, primary_key=True)

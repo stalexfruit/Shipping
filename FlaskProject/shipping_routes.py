@@ -7,7 +7,7 @@ if os.getenv("FLASK_ENV") == "pos":
 else:
     from database import db
 
-from models import Customer, Order
+from .models import Customer, Order
 
 # Define the shipping blueprint
 shipping_bp = Blueprint('shipping', __name__)
