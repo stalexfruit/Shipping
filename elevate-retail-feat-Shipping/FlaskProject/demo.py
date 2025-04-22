@@ -1,0 +1,68 @@
+import webbrowser
+#import database
+from models import Shipping
+import sqlite3
+
+connection = sqlite3.connect('shippingDatabase.db')
+cursor = connection.cursor()
+
+statuses = []
+status = cursor.execute('''SELECT Ship_Status FROM Shipping''')
+for x in status:
+    statuses.append(x)
+
+html = f"""
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Package Progress</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container my-4">
+      <h1>Package Delivery Progress</h1>
+      <p>Current status: <strong>{statuses[0]}</strong></p>
+
+<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+  <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:5%;"></div>
+</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+"""
+
+with open("templates\landing.html", "w") as file:
+    file.write(html)
+demoFile = webbrowser.open('templates\landing.html')
+
+command = input()
+
+html = f"""
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Package Progress</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container my-4">
+      <h1>Package Delivery Progress</h1>
+      <p>Current status: <strong>{statuses[1]}</strong></p>
+
+<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+  <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:50%;"></div>
+</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+"""
+
+with open("templates\landing.html", "w") as file:
+    file.write(html)
+demoFile2 = webbrowser.open('templates\landing.html')

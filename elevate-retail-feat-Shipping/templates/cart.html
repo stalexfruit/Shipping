@@ -1,0 +1,250 @@
+{% extends "base.html" %} {% block title %}Cart{% endblock %} {% block content
+%}
+
+<!-- Alert message, remove for production -->
+{% if alert_message %}
+<script>
+  alert("{{ alert_message }}");
+</script>
+{% endif %}
+
+<div
+  class="container mt-5 p-3 rounded shadow"
+  style="background-color: #c2d6d6"
+>
+  <h1>Shopping Cart</h1>
+  {% if items %}
+  <table
+    class="table table-hover table-secondary table-striped p-5 rounded-3 overflow-hidden shadow"
+  >
+    <thead>
+      <tr>
+        <th scope="col">Product</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+        <th scope="col">Total</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item['name'] }}</td>
+        <td>{{ item['quantity'] }}</td>
+        <td>${{ item['price'] }}</td>
+        <td>${{ item.price * item.quantity }}</td>
+        <td>
+          <!--Remove 1-->
+          <div class="d-flex gap-2">
+            <form action="/remove_from_cart/{{ item.id }}" method="GET">
+              {{ form.hidden_tag() }}
+              <button type="submit" class="btn btn-sm rounded-pill">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-dash-lg"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8"
+                  />
+                </svg>
+              </button>
+            </form>
+            <!--Add 1-->
+            <form action="/add_to_cart/{{ item.id }}" method="GET">
+              {{ form.hidden_tag() }}
+              <button
+                id="cart-add-btn"
+                type="submit"
+                class="btn btn-sm rounded-pill"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-plus-lg"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"
+                  />
+                </svg>
+              </button>
+            </form>
+            <!--Remove All-->
+            <form action="/remove_all_of_item/{{ item.id }}" method="GET">
+              {{ form.hidden_tag() }}
+              <button type="submit" class="btn btn-sm rounded-pill">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-trash3"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"
+                  />
+                </svg>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between align-items-center">
+    <h3>Total: ${{ total_price }}</h3>
+    <div class="d-flex gap-2">
+      <button
+        type="button"
+        class="btn btn-outline-success shadow"
+        data-bs-toggle="modal"
+        data-bs-target="#loginModal"
+      >
+        Confirm Purchase
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary shadow"
+        data-bs-toggle="modal"
+        data-bs-target="#guestPurchaseModal"
+      >
+        Guest Purchase
+      </button>
+    </div>
+  </div>
+
+  {% else %}
+  <p>Your cart is empty.</p>
+  {% endif %}
+</div>
+<!-- Toast -->
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
+%}
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  {% for category, message in messages %}
+  <div
+    id="toast-{{ loop.index }}"
+    class="toast align-items-center text-bg-{{ category }}"
+    role="alert"
+    aria-live="polite"
+    aria-atomic="true"
+    data-bs-autohide="true"
+    data-bs-delay="5000"
+  >
+    <div class="d-flex">
+      <div class="toast-body">{{ message }}</div>
+      <button
+        type="button"
+        class="btn-close btn-close-white me-2 m-auto"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %} {% endwith %}
+<!-- Modals -->
+
+<!-- Confirm Purchase Button Modal-->
+<!-- Only opens dummy login form for now -->
+<div
+  class="modal fade"
+  id="loginModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="loginModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel">Please Log to Continue</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/login">
+          {{ form.hidden_tag() }}
+          <div class="form-floating mb-3">
+            {{ form.email(class="form-control", placeholder="Email Address") }}
+            {{ form.email.label(class="form-label") }}
+          </div>
+          <div class="form-floating">
+            {{ form.password(class="form-control", placeholder="Password") }} {{
+            form.password.label(class="form-label") }}
+          </div>
+          <div class="mb-3">
+            {{ form.submit(class="btn btn-primary mt-3") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Guest Purchase Modal-->
+<div
+  class="modal fade"
+  id="guestPurchaseModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="guestPurchaseModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="guestPurchaseModalLabel">
+          Guest Purchase Form
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body" id="guestPurchaseContent">
+        <!-- Content will be injected here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--AJAX logic to inject page into modal-->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var guestPurchaseButton = document.querySelector(
+      '[data-bs-target="#guestPurchaseModal"]'
+    );
+    guestPurchaseButton.addEventListener("click", function () {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/guest-purchase-form", true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          document.getElementById("guestPurchaseContent").innerHTML =
+            xhr.responseText;
+        }
+      };
+      xhr.send();
+    });
+  });
+</script>
+{% endblock %}
