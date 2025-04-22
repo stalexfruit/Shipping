@@ -7,7 +7,7 @@ if os.getenv("FLASK_ENV") == "pos":
 else:
     from database import db
 
-from .models import Customer, Order
+from .models import Customer, Order, ShippingCompany
 
 # Define the shipping blueprint
 shipping_bp = Blueprint('shipping', __name__)
@@ -21,11 +21,8 @@ def calculate_shipping_cost(customer_type, shipping_option):
     :param shipping_option: Chosen shipping option (e.g., 'FedEx', 'UPS').
     :return: Calculated shipping cost, or 0.0 for Prime members.
     """
-    shipping_rates = {"fedex": 10.0, "ups": 8.0}
-    if customer_type.lower() == "prime":
-        return 0.0
-    shipping_option = shipping_option.lower()
-    return shipping_rates.get(shipping_option, 0.0)
+    shipping_rates = {"Fedex": 10.0, "UPS": 8.0, "Amazon": 8.0, "USPS": 6.0}
+    return 0.0 if customer_type.lower() == "prime" else shipping_rates.get(Shipping.Carrier, 0.0)
 
 
 @shipping_bp.route('/orders', methods=['POST'])
@@ -38,7 +35,7 @@ def create_order():
     data = request.get_json()
 
     # Validate required fields
-    required_fields = ['Customer_ID', 'Type', 'Shipping_Option']
+    required_fields = ['Customer_ID','Membership_Level','Shipping_Company', 'Shipping_Option']
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -48,15 +45,19 @@ def create_order():
     if not customer:
         return jsonify({"error": "Customer not found"}), 404
 
+    company = Shipping.Carrier.query.filler_by(Name=data['Shipping_Company']).first()
+
     # Calculate shipping cost
-    shipping_cost = calculate_shipping_cost(customer.Type, data['Shipping_Option'])
+    Cost = calculate_shipping_cost(customer.Type, data['Shipping_Option'])
 
     # Create new order
     new_order = Order(
         Customer_ID=data['Customer_ID'],
-        Type=data['Type'],
-        Shipping_Option=data['Shipping_Option'],
-        Shipping_Cost=shipping_cost
+        Membership_Level=data['Membership_Level'],
+        Shipping_ID=company.Company_ID,
+        Carrier=data['Shipping_Option'],
+        Cost=Shipping.Cost
+
     )
 
     # Add to session and commit
@@ -66,6 +67,7 @@ def create_order():
     # Respond with success message
     return jsonify({
         "message": "Order created successfully.",
-        "Shipping_Cost": shipping_cost
+        "Shipping_Cost": Shipping.Cost,
+        "Shipping_Company": Shipping.Carrier
     }), 201
 

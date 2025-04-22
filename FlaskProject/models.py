@@ -4,44 +4,54 @@ if os.getenv("FLASK_ENV") == "pos":
 else:
     from database import db
 
+
 class Customer(db.Model):
-    __tablename__ = 'Customer'
-    Customer_ID = db.Column(db.Integer, primary_key=True)  # Primary key
-    First_name = db.Column(db.String(255), nullable=False)
-    Last_name = db.Column(db.String(255), nullable=False)  # Fixed capitalization for consistency
-    Address = db.Column(db.String(255), nullable=False)
-    Birthday = db.Column(db.String(10))  # Optional field
-    Membership_Level = db.Column(db.String(50))  # Presumed type or classification of customer
+    __tablename__ = 'customer'
 
-    # Relationship to 'Order' class
-    orders = db.relationship('Order', backref='customer', lazy=True)
+    Customer_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    First_Name = db.Column(db.String(50), nullable=False)
+    Last_Name = db.Column(db.String(50), nullable=False)
+    Email = db.Column(db.String(254), unique=True, nullable=False)
+    Phone = db.Column(db.String(20))
+    Membership_Level = db.Column(db.String(50), nullable=False)
+    Created_At = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    Updated_At = db.Column(db.DateTime, nullable=True, onupdate=db.func.now())
+    Deleted_At = db.Column(db.DateTime, nullable=True)
+
+    # Relationships
+    orders = db.relationship('Order', back_populates='customer')
 
 
+# Define the Order model
 class Order(db.Model):
-    __tablename__ = 'Order'
-    Order_ID = db.Column(db.Integer, primary_key=True)  # Primary key
-    Customer_ID = db.Column(db.Integer, db.ForeignKey('Customer.Customer_ID'), nullable=False)  # Foreign key linking to 'Customer'
-    Membership_Level = db.Column(db.String(50), nullable=False)  # Changed from Float to String to reflect appropriate data
-    Shipping_Option = db.Column(db.String(50), nullable=False)
-    Shipping_Cost = db.Column(db.Float, nullable=False)
+    __tablename__ = 'order'
 
-    # Relationship to 'Shipping' class
-    shipping = db.relationship('Shipping', backref='order', lazy=True)
+    Order_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Customer_ID = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), nullable=False)
+    Order_Date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    # Relationships
+    customer = db.relationship('Customer', back_populates='orders')
+    shipping = db.relationship('Shipping', back_populates='order')
 
 
+# Define the Shipping model
 class Shipping(db.Model):
-    __tablename__ = 'Shipping'
-    Shipping_ID = db.Column(db.Integer, primary_key=True)  # Primary key
-    Order_ID = db.Column(db.Integer, db.ForeignKey('Order.Order_ID'), nullable=False)  # Foreign key linking to 'Order'
-    Address = db.Column(db.String(255), nullable=False)
-    City = db.Column(db.String(100))
-    Zip_Code = db.Column(db.String(20))
-    State = db.Column(db.String(50))
+    __tablename__ = 'shipping'
 
-class Tracking(db.Model):
-    __tablename__ = 'Tracking'
-    Tracking_ID = db.Column(db.Integer, primary_key=True)
-    Order_ID = db.Column(db.Integer, db.ForeignKey('Order.Order_ID'), nullable=False)
-    TrackingNumber = db.Column(db.String(255))
-    CurrentLocation = db.Column(db.String(255))
-    ExpectedDeliveryDate = db.Column(db.Date)
+    Shipping_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Order_ID = db.Column(db.Integer, db.ForeignKey('order.order_id'), nullable=False)
+    Cost = db.Column(db.Numeric(8, 2), nullable=False)
+    Shipped_On = db.Column(db.DateTime, nullable=True)
+    Expected_By = db.Column(db.DateTime, nullable=True)
+    Status = db.Column(db.String(15), nullable=False,
+                            check_constraint="ship_status IN ('Pending', 'Shipped', 'Delivered', 'Returned')")
+    Carrier = db.Column(db.String(100), nullable=False)
+    Tracking_Number = db.Column(db.String(50), nullable=False)
+    Created_At = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    Updated_At = db.Column(db.DateTime, nullable=True, onupdate=db.func.now())
+    Shipping_Address_ID = db.Column(db.Integer, nullable=False)
+    Billing_Address_ID = db.Column(db.Integer, nullable=False)
+
+    # Relationships
+    order = db.relationship('Order', back_populates='shippings')
