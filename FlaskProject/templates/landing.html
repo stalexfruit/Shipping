@@ -1,21 +1,228 @@
+<!-- Fatima Napoles -->
+<!--
+This landing page connects with Elevate Retail's linking pages
+for our Capstone project and simulates a shipping process for our store.
+-->
+
+<!-- This file includes styling and JS, with a Bootstrap add-on -->
+
+
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Package Progress</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-  </head>
-  <body>
-    <div class="container my-4">
-      <h1>Package Delivery Progress</h1>
-      <p>Current status: <strong>{{ status }}</strong></p>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shipping Progress - Elevate Retail</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f7fc;
+      font-family: 'Arial', sans-serif;
+    }
 
-<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-  <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ percent }}%;""></div>
-</div>
+    .container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-top: 120px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #007bff;
+      font-size: 2.8rem;
+    }
+
+    .status-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .status-text {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #17a2b8;
+      padding: 8px 16px;
+      border-radius: 25px;
+      background-color: rgba(23, 162, 184, 0.1);
+    }
+
+    .progress-container {
+      position: relative;
+      width: 100%;
+      height: 100px; /* increased height to allow space under bar */
+      margin-top: 60px; /* pushed bar down a bit more */
+    }
+
+    .progress {
+      height: 30px;
+      border-radius: 20px;
+    }
+
+    .progress-bar {
+      background-color: #28a745;
+      transition: width 0.2s ease-in-out;
+    }
+
+    .truck {
+      font-size: 3rem;
+      color: #543205;
+      position: absolute;
+      bottom: -20px; /* Places truck under the progress bar, overlapping slightly */
+      left: 0;
+      transition: left 0.2s ease-in-out;
+    }
+
+    .truck i {
+      text-shadow: 0 0 4px white;
+    }
+
+    /* House Icon Styling */
+    .house-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 3rem;
+      color: #007bff;
+    }
+
+    #complete-message {
+      display: none;
+      font-size: 1.25rem;
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .about-section {
+      background-color: #f0f8ff;
+      padding: 50px;
+      margin-top: 80px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .about-section h2 {
+      color: #0056b3;
+    }
+
+    .testimonial-section {
+      background-color: #ffffff;
+      padding: 50px;
+      margin-top: 80px;
+      border-radius: 12px;
+    }
+
+    .testimonial-card {
+      background-color: #f7f7f7;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .rating {
+      color: #ffcc00;
+    }
+  </style>
+</head>
+<body>
+  <div class="container my-4">
+    <h1>From Our Warehouse All The Way To You <br> Shipping Done Right</h1>
+
+    <!-- status of truck / progress bar -->
+    <div class="status-container">
+      <div class="status-text">Shipment In Progress</div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+    <div class="progress-container">
+      <div class="progress">
+        <div class="progress-bar" style="width: 40%;"></div>
+      </div>
+      <!-- House Icon -->
+      <div class="house-icon">
+        <i class="fas fa-house"></i>
+      </div>
+      <!-- Truck Icon -->
+      <div class="truck truck-position">
+        <i class="fas fa-truck"></i>
+      </div>
+    </div>
+
+    // delivery CONFIRMATION
+    <div id="complete-message" class="alert alert-success text-center mt-4">
+      <i class="fas fa-check-circle me-2"></i> Your package has arrived — thank you for choosing Elevate Retail!
+    </div>
+  </div>
+
+  <!-- about -->
+  <div class="about-section">
+    <h2>How We Elevate Your Experience</h2>
+    <p>At Elevate Retail, our mission is to provide exceptional service by ensuring your shipments arrive on time and in perfect condition. We are constantly innovating and improving our processes to make your shopping and shipping experience effortless and seamless. Our customers are at the heart of everything we do, and we are committed to your satisfaction.</p>
+  </div>
+
+    //testimonials
+  <div class="testimonial-section">
+    <h3>What Our Customers Say</h3>
+
+    <div class="testimonial-card">
+      <p>"Elevate Retail's delivery was fast and my package arrived in PERFECT condition yay!"</p>
+      <div class="customer-name">Cris R.</div>
+      <div class="rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <p>"Their customer service is top-notch! Quality is amazing."</p>
+      <div class="customer-name">Max N.</div>
+      <div class="rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+    </div>
+  </div>
+
+    // js to animate progress ---
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let percent = 40;
+      const progressBar = document.querySelector('.progress-bar');
+      const truck = document.querySelector('.truck');
+      const completeMessage = document.getElementById('complete-message');
+
+      progressBar.style.width = percent + "%";
+      truck.style.left = (percent / 100) * 100 + "%";
+
+      let interval = setInterval(() => {
+        if (percent >= 100) {
+          clearInterval(interval);
+          progressBar.style.width = "100%";
+          truck.style.left = "100%";
+          truck.style.display = "none";
+
+          setTimeout(() => {
+            completeMessage.style.display = "block";
+          }, 300);
+        } else {
+          percent += 2;
+          progressBar.style.width = percent + "%";
+          truck.style.left = percent + "%";
+        }
+      }, 50);
+    });
+  </script>
+
+</body>
 </html>
