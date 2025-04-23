@@ -176,6 +176,7 @@ for our Capstone project and simulates a shipping process for our store.
   </div>
 
      <!-- TESTIMONIALS -->
+
   <div class="testimonial-section">
     <h3>What Our Customers Say</h3>
 
@@ -195,6 +196,35 @@ for our Capstone project and simulates a shipping process for our store.
       </div>
     </div>
   </div>
+
+  <!-- Review Submission Section -->
+<div class="container mt-5 p-4 shadow-sm bg-light rounded" id="review-section">
+  <h4 class="text-center mb-3 text-primary fw-bold">We'd Love to Hear From You!</h4>
+
+  <div class="text-center mb-3">
+    <button id="leaveReviewBtn" class="btn btn-outline-primary">Leave a Review</button>
+  </div>
+
+  <div id="reviewForm" style="display: none;" class="animate__animated animate__fadeIn">
+    <form id="testimonialForm">
+      <div class="mb-3">
+        <label for="reviewText" class="form-label fw-semibold">Your Review</label>
+        <textarea class="form-control" id="reviewText" rows="3" placeholder="Share your thoughts..." required></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="reviewName" class="form-label fw-semibold">Your Name</label>
+        <input type="text" class="form-control" id="reviewName" placeholder="Your Name" required>
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-success px-4">Submit</button>
+      </div>
+    </form>
+    <div id="thankYouMessage" class="alert alert-success mt-3 text-center" style="display: none;">
+      🛋️ Thanks for your feedback! We appreciate you.
+    </div>
+  </div>
+</div>
+
 
       <!-- js PROGRESS ANIMATION -->
   <script>
@@ -224,7 +254,29 @@ for our Capstone project and simulates a shipping process for our store.
         }
       }, 50);
     });
+    const leaveReviewBtn = document.getElementById("leaveReviewBtn");
+const reviewForm = document.getElementById("reviewForm");
+const testimonialForm = document.getElementById("testimonialForm");
+const thankYouMessage = document.getElementById("thankYouMessage");
+
+leaveReviewBtn.addEventListener("click", () => {
+  reviewForm.style.display = reviewForm.style.display === "none" ? "block" : "none";
+});
+
+testimonialForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+  thankYouMessage.style.display = "block";
+  testimonialForm.reset();
+
+  setTimeout(() => {
+    reviewForm.style.display = "none";
+    thankYouMessage.style.display = "none";
+  }, 3000);
+});
+
   </script>
+
 
 </body>
 </html>
+
