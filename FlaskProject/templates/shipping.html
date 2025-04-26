@@ -167,6 +167,13 @@ for our Capstone project and simulates a shipping process for our store.
     <div id="complete-message" class="alert alert-success text-center mt-4">
       <i class="fas fa-check-circle me-2"></i> Your package has arrived! <br> Thank you for choosing Elevated Retail
     </div>
+    <div class="container my-4">
+      <h3>Shipping Information</h3>
+      <p><strong>Tracking Number:</strong> {{ shipping.Tracking_Number }}</p>
+      <p><strong>Expected By:</strong> {{ shipping.Expected_By.strftime('%A, %B %d, %Y') }}</p>
+      <p><strong>Shipped On:</strong> {{ shipping.Shipped_On.strftime('%A, %B %d, %Y') }}</p>
+      <p><strong>Carrier:</strong> {{ shipping.Carrier }}</p>
+    </div>
   </div>
 
   <!-- about -->
@@ -176,7 +183,6 @@ for our Capstone project and simulates a shipping process for our store.
   </div>
 
      <!-- TESTIMONIALS -->
-
   <div class="testimonial-section">
     <h3>What Our Customers Say</h3>
 
@@ -197,42 +203,38 @@ for our Capstone project and simulates a shipping process for our store.
     </div>
   </div>
 
-  <!-- Review Submission Section -->
-<div class="container mt-5 p-4 shadow-sm bg-light rounded" id="review-section">
-  <h4 class="text-center mb-3 text-primary fw-bold">We'd Love to Hear From You!</h4>
-
-  <div class="text-center mb-3">
-    <button id="leaveReviewBtn" class="btn btn-outline-primary">Leave a Review</button>
-  </div>
-
-  <div id="reviewForm" style="display: none;" class="animate__animated animate__fadeIn">
-    <form id="testimonialForm">
-      <div class="mb-3">
-        <label for="reviewText" class="form-label fw-semibold">Your Review</label>
-        <textarea class="form-control" id="reviewText" rows="3" placeholder="Share your thoughts..." required></textarea>
-      </div>
-      <div class="mb-3">
-        <label for="reviewName" class="form-label fw-semibold">Your Name</label>
-        <input type="text" class="form-control" id="reviewName" placeholder="Your Name" required>
-      </div>
-      <div class="text-center">
-        <button type="submit" class="btn btn-success px-4">Submit</button>
-      </div>
-    </form>
-    <div id="thankYouMessage" class="alert alert-success mt-3 text-center" style="display: none;">
-      🛋️ Thanks for your feedback! We appreciate you.
-    </div>
-  </div>
-</div>
-
-
       <!-- js PROGRESS ANIMATION -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      let shipping = '{{ shipping|tojson }}';
+
+      shipping = JSON.parse(shipping); // Parse the JSON string into an object
+
       let percent = 20;
+
+      if (shipping.Ship_Status) {
+        switch (shipping.Ship_Status) {
+          case "Pending":
+            percent = 10;
+            break;
+          case "Shipped":
+            percent = 50;
+            break;
+          case "Delivered":
+            percent = 100;
+            break;
+        }
+      }
+
       const progressBar = document.querySelector('.progress-bar');
       const truck = document.querySelector('.truck');
       const completeMessage = document.getElementById('complete-message');
+
+      if (percent >= 100) {
+        completeMessage.style.display = "block";
+        truck.style.display = "none";
+        truck.style.left = "100%";
+      }
 
       progressBar.style.width = percent + "%";
       truck.style.left = (percent / 100) * 100 + "%";
@@ -252,31 +254,9 @@ for our Capstone project and simulates a shipping process for our store.
           progressBar.style.width = percent + "%";
           truck.style.left = percent + "%";
         }
-      }, 50);
+      }, 5000);
     });
-    const leaveReviewBtn = document.getElementById("leaveReviewBtn");
-const reviewForm = document.getElementById("reviewForm");
-const testimonialForm = document.getElementById("testimonialForm");
-const thankYouMessage = document.getElementById("thankYouMessage");
-
-leaveReviewBtn.addEventListener("click", () => {
-  reviewForm.style.display = reviewForm.style.display === "none" ? "block" : "none";
-});
-
-testimonialForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-  thankYouMessage.style.display = "block";
-  testimonialForm.reset();
-
-  setTimeout(() => {
-    reviewForm.style.display = "none";
-    thankYouMessage.style.display = "none";
-  }, 3000);
-});
-
   </script>
-
 
 </body>
 </html>
-
